@@ -27,9 +27,15 @@
 </select>
 <button (click)="filter()">Search</button>
 </form>
+<div *ngIf="happyHour">
+  <button (click)="endHappyHour()">End Happy Hour</button>
+</div>
+<div *ngIf="notHappyHour">
+  <button (click)="startHappyHour()">Start Happy Hour</button>
+</div>
 <ul *ngFor="let keg of totalKegs">
   <li *ngIf="keg.search"[class]="keg.priceCheck()">
-    <p [class]="keg.abvCheck()">Name: {{keg.name}}<br>Brand: {{keg.brand}}<br>Style:  {{keg.style}}<br>Dollars Per Pint: ${{keg.price}}<br>Alcohol Content: {{keg.abv}}%, <span [class]="keg.pintsLow()">{{keg.pints}} Pints Remaining</span></p>
+    <p [class]="keg.abvCheck()">Name: {{keg.name}}<br>Brand: {{keg.brand}}<br>Style:  {{keg.style}}<br>Dollars Per Pint: ${{keg.price}}<br>Alcohol Content: {{keg.abv}}%<br><span [class]="keg.pintsLow()">{{keg.pints}} Pints Remaining</span></p>
     <button (click)="keg.editKeg(name, brand, price, abv); clearInputs();">Edit</button>
     <button (click)="keg.orderDrink(keg.selectedOrder)">Order</button>
     <select [value]="keg.selectedOrder" (input)="keg.selectedOrder = $event.target.value">
@@ -39,7 +45,7 @@
     </select>
     <div *ngIf="keg.offSale">
       <button (click)="keg.putOnSale()">Put On Sale</button>
-      <input [value]="keg.sale" (input)="keg.sale = $event.target.value" type="text" placeholder="Sale By Decimal">
+      <input [value]="keg.sale" (input)="keg.sale = $event.target.value" type="text" placeholder="Sale By Percentage">
     </div>
     <div *ngIf="keg.onSale">
       <button (click)="keg.takeOffSale()">Take Off Sale</button>

@@ -1,21 +1,23 @@
-.supply-good {
+* {
+  box-sizing: border-box;
 }
 
 .low-pints {
   font-weight: 600;
-  background-color: red;
+  background-color: peachpuff;
 }
 
 .low-cost {
-  background-color: green;
+  // background-color: green;
+  background: linear-gradient(45deg, aqua, bisque);
 }
 
 .average-cost {
-  background-color: yellow;
+  background: linear-gradient(45deg, crimson, maroon, darkblue);
 }
 
 .expensive-cost {
-  background-color: rebeccapurple;
+  background: linear-gradient(45deg, rebeccapurple, yellow, royalblue);
 }
 
 .low-abv {
@@ -31,5 +33,15 @@
 }
 
 .on-sale {
-  background-color: orange;
+  background: linear-gradient(45deg, gold, orange, black);
+}
+
+body {
+  background-image: url("/resources/img/tap-room.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+li {
+  display: block;
 }

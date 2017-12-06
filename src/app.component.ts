@@ -13,6 +13,8 @@ export class AppComponent {
   public abv: number;
   public style: string;
   public search: string;
+  public happyHour: boolean = false;
+  public notHappyHour: boolean = true;
   constructor(){
     this.name = "";
     this.brand = "";
@@ -50,6 +52,38 @@ export class AppComponent {
       }
     })
   }
+
+  startHappyHour() {
+    this.happyHour = true;
+    this.notHappyHour = false;
+    this.totalKegs.forEach(function(keg){
+      if(keg.oldPrice != null) {
+        keg.price = keg.oldPrice;
+        keg.oldPrice = null;
+      }
+      keg.oldPrice = keg.price;
+      keg.price = keg.price - (keg.price * .5);
+      keg.offSale = false;
+      keg.onSale = false;
+    })
+  }
+  endHappyHour() {
+    this.happyHour = false;
+    this.notHappyHour = true;
+    this.totalKegs.forEach(function(keg){
+      keg.price = keg.oldPrice;
+      keg.oldPrice = null;
+      if(keg.sale != null) {
+        keg.oldPrice = keg.price;
+        keg.price = keg.price - (keg.price * keg.sale / 100);
+        keg.offSale = false;
+        keg.onSale = true;
+      } else {
+        keg.offSale = true;
+        keg.onSale = false;
+      }
+    })
+  }
 }
 
 class Keg {
@@ -77,8 +111,7 @@ class Keg {
   }
   putOnSale() {
     this.oldPrice = this.price;
-    this.price = this.price - this.price * this.sale;
-    this.sale = null;
+    this.price = this.price - (this.price * this.sale / 100);
     this.onSale = true;
     this.offSale = false;
   }
@@ -87,6 +120,7 @@ class Keg {
     this.oldPrice = null;
     this.onSale = false;
     this.offSale = true;
+    this.sale = null;
   }
   orderDrink(selectedOrder) {
     if(this.pints <= 0) {
