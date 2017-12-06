@@ -2,28 +2,7 @@ import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  template: `
-  <h1>BAER ROOM</h1>
-  <form>
-    <input [value]="name" (input)="name = $event.target.value" type="text" placeholder="Beer Name">
-    <input [value]="brand" (input)="brand = $event.target.value" type="text" placeholder="Brand">
-    <input [value]="price" (input)="price = $event.target.value" type="text" placeholder="Beer Price">
-    <input [value]="abv" (input)="abv = $event.target.value" type="text" placeholder="Beer Alcohol Content">
-    <button (click)="addKeg(); clearInputs()">Add Keg</button>
-  </form>
-  <ul>
-    <li *ngFor="let keg of totalKegs"  [class]="keg.priceCheck()">
-      <p [class]="keg.abvCheck()">{{keg.name}}, {{keg.brand}}, \${{keg.price}}, {{keg.abv}}%, <span [class]="keg.pintsLow()">{{keg.pints}} Pints Remaining</span></p>
-      <button (click)="keg.editKeg(name, brand, price, abv); clearInputs();">Edit</button>
-      <button (click)="keg.orderDrink(keg.selectedOrder)">Order</button>
-      <select [value]="keg.selectedOrder" (input)="keg.selectedOrder = $event.target.value">
-        <option value="pint">pint</option>
-        <option value="growler">growler</option>
-        <option value="large-growler">large growler</option>
-      </select>
-    </li>
-  </ul>
-  `
+  templateUrl: `src/app.component.html`,
 })
 
 export class AppComponent {
@@ -32,15 +11,19 @@ export class AppComponent {
   public brand: string;
   public price: number;
   public abv: number;
+  public style: string;
+  public search: string;
   constructor(){
     this.name = "";
     this.brand = "";
     this.price = null;
     this.abv = null;
+    this.style = "IPA";
+    this.search = "all";
   }
   addKeg() {
     if(this.name != "" && this.brand != "" && this.price != null && this.abv != null) {
-      this.totalKegs.push(new Keg(this.name, this.brand, this.price, this.abv));
+      this.totalKegs.push(new Keg(this.name, this.brand, this.price, this.abv, this.style));
     } else {
       this.clearInputs();
       alert("You missed a field");
@@ -51,13 +34,28 @@ export class AppComponent {
     this.brand = "";
     this.price = null;
     this.abv = null;
+    this.style = "IPA";
   }
-
+  filter() {
+    let mySearch = this.search;
+    this.totalKegs.forEach(function(keg){
+      if(mySearch === "all") {
+        keg.search = true;
+      } else {
+        if(mySearch === keg.style) {
+          keg.search = true;
+        } else {
+          keg.search = false;
+        }
+      }
+    })
+  }
 }
 
 class Keg {
   public selectedOrder: string = "pint";
-  constructor(public name: string, public brand: string, public price: number, public abv: number, public pints: number = 124) {}
+  public search: boolean = true;
+  constructor(public name: string, public brand: string, public price: number, public abv: number, public style: string, public pints: number = 124) {}
 
   editKeg(name, brand, price, abv) {
     if(name != "") {
@@ -84,7 +82,7 @@ class Keg {
     } else if(selectedOrder === "large-growler" && this.pints >= 4) {
       this.pints -= 4;
     } else {
-      alert(`You don't have enough ${this.name} to serve that drink`);
+      alert(`You don't have enough ${this.name} to a ${selectedOrder}`);
     }
     if(this.pints <= 0) {
       alert(`You're out of ${this.name}`);
