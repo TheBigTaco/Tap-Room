@@ -55,6 +55,10 @@ export class AppComponent {
 class Keg {
   public selectedOrder: string = "pint";
   public search: boolean = true;
+  public sale: number = null;
+  public onSale: boolean = false;
+  public offSale: boolean = true;
+  public oldPrice: number = null;
   constructor(public name: string, public brand: string, public price: number, public abv: number, public style: string, public pints: number = 124) {}
 
   editKeg(name, brand, price, abv) {
@@ -71,7 +75,19 @@ class Keg {
       this.abv = abv;
     }
   }
-
+  putOnSale() {
+    this.oldPrice = this.price;
+    this.price = this.price - this.price * this.sale;
+    this.sale = null;
+    this.onSale = true;
+    this.offSale = false;
+  }
+  takeOffSale() {
+    this.price = this.oldPrice;
+    this.oldPrice = null;
+    this.onSale = false;
+    this.offSale = true;
+  }
   orderDrink(selectedOrder) {
     if(this.pints <= 0) {
       alert(`You're out of ${this.name}`);
@@ -90,12 +106,16 @@ class Keg {
   }
 
   priceCheck() {
-    if(this.price <= 5) {
-      return "low-cost";
-    } else if (this.price <= 8) {
-      return "average-cost";
+    if(this.onSale) {
+      return "on-sale";
     } else {
-      return "expensive-cost";
+      if(this.price <= 5) {
+        return "low-cost";
+      } else if (this.price <= 8) {
+        return "average-cost";
+      } else {
+        return "expensive-cost";
+      }
     }
   }
 
