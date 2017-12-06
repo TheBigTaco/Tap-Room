@@ -15,7 +15,12 @@ import {Component} from '@angular/core';
     <li *ngFor="let keg of totalKegs"  [class]="keg.priceCheck()">
       <p [class]="keg.abvCheck()">{{keg.name}}, {{keg.brand}}, \${{keg.price}}, {{keg.abv}}%, <span [class]="keg.pintsLow()">{{keg.pints}} Pints Remaining</span></p>
       <button (click)="keg.editKeg(name, brand, price, abv); clearInputs();">Edit</button>
-      <button (click)="keg.orderDrink()">Order</button>
+      <button (click)="keg.orderDrink(keg.selectedOrder)">Order</button>
+      <select [value]="keg.selectedOrder" (input)="keg.selectedOrder = $event.target.value">
+        <option value="pint">pint</option>
+        <option value="growler">growler</option>
+        <option value="large-growler">large growler</option>
+      </select>
     </li>
   </ul>
   `
@@ -51,6 +56,7 @@ export class AppComponent {
 }
 
 class Keg {
+  public selectedOrder: string = "pint";
   constructor(public name: string, public brand: string, public price: number, public abv: number, public pints: number = 124) {}
 
   editKeg(name, brand, price, abv) {
@@ -68,14 +74,20 @@ class Keg {
     }
   }
 
-  orderDrink() {
+  orderDrink(selectedOrder) {
     if(this.pints <= 0) {
       alert(`You're out of ${this.name}`);
-    } else {
+    } else if(selectedOrder === "pint") {
       this.pints--;
-      if(this.pints <= 0) {
-        alert(`You're out of ${this.name}`);
-      }
+    } else if(selectedOrder === "growler" && this.pints >= 2) {
+      this.pints -= 2;
+    } else if(selectedOrder === "large-growler" && this.pints >= 4) {
+      this.pints -= 4;
+    } else {
+      alert(`You don't have enough ${this.name} to serve that drink`);
+    }
+    if(this.pints <= 0) {
+      alert(`You're out of ${this.name}`);
     }
   }
 
