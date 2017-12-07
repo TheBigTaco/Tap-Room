@@ -22,6 +22,13 @@ export class AppComponent {
     this.abv = null;
     this.style = "IPA";
     this.search = "all";
+    setInterval(function(){
+      if(this.happyHour) {
+        this.endHappyHour();
+      } else {
+        this.startHappyHour();
+      }
+    }.bind(this), 60000);
   }
   addKeg() {
     if(this.name != "" && this.brand != "" && this.price != null && this.abv != null) {
