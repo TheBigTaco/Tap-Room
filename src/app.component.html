@@ -4,7 +4,7 @@
   <input [value]="brand" (input)="brand = $event.target.value" type="text" placeholder="Brand">
   <input [value]="price" (input)="price = $event.target.value" type="text" placeholder="Beer Price">
   <input [value]="abv" (input)="abv = $event.target.value" type="text" placeholder="Beer Alcohol Content">
-  <select [value]="style" (input)="style = $event.target.value">
+  <select [value]="style" (input)="style = $event.target.value" id="styles">
     <option value="IPA">IPA</option>
     <option value="Stout">Stout</option>
     <option value="Ale">Ale</option>
@@ -12,43 +12,54 @@
     <option value="Pilsner">Pilsner</option>
     <option value="Porter">Porter</option>
   </select>
-  <button (click)="addKeg(); clearInputs()">Add Keg</button>
+  <button *ngIf="notHappyHour" (click)="addKeg(); clearInputs()" id="add-keg">Add Keg</button>
 </form>
 <form>
-<label>Filter</label><br>
-<select [value]="search" (input)="search = $event.target.value">
-  <option value="all">Show All</option>
-  <option value="IPA">IPA</option>
-  <option value="Stout">Stout</option>
-  <option value="Ale">Ale</option>
-  <option value="Lager">Lager</option>
-  <option value="Pilsner">Pilsner</option>
-  <option value="Porter">Porter</option>
-</select>
-<button (click)="filter()">Search</button>
+<div id="label-div">
+  <label id="filter">Filter</label><br>
+  <select [value]="search" (input)="search = $event.target.value" id="show">
+    <option value="all">Show All</option>
+    <option value="IPA">IPA</option>
+    <option value="Stout">Stout</option>
+    <option value="Ale">Ale</option>
+    <option value="Lager">Lager</option>
+    <option value="Pilsner">Pilsner</option>
+    <option value="Porter">Porter</option>
+  </select>
+  <button (click)="filter()" id="search">Search</button>
+</div>
 </form>
 <div *ngIf="happyHour">
-  <button (click)="endHappyHour()">End Happy Hour</button>
+  <button (click)="endHappyHour()" id="end">End Happy Hour</button>
 </div>
 <div *ngIf="notHappyHour">
-  <button (click)="startHappyHour()">Start Happy Hour</button>
+  <button (click)="startHappyHour()" id="happy-hour">Start Happy Hour</button>
 </div>
 <ul *ngFor="let keg of totalKegs">
   <li *ngIf="keg.search"[class]="keg.priceCheck()">
-    <p [class]="keg.abvCheck()">Name: {{keg.name}}<br>Brand: {{keg.brand}}<br>Style:  {{keg.style}}<br>Dollars Per Pint: ${{keg.price}}<br>Alcohol Content: {{keg.abv}}%<br><span [class]="keg.pintsLow()">{{keg.pints}} Pints Remaining</span></p>
-    <button (click)="keg.editKeg(name, brand, price, abv); clearInputs();">Edit</button>
-    <button (click)="keg.orderDrink(keg.selectedOrder)">Order</button>
-    <select [value]="keg.selectedOrder" (input)="keg.selectedOrder = $event.target.value">
-      <option value="pint">pint</option>
-      <option value="growler">growler</option>
-      <option value="large-growler">large growler</option>
-    </select>
-    <div *ngIf="keg.offSale">
-      <button (click)="keg.putOnSale()">Put On Sale</button>
-      <input [value]="keg.sale" (input)="keg.sale = $event.target.value" type="text" placeholder="Sale By Percentage">
+    <p [class]="keg.abvCheck()">Name: {{keg.name}}<br>Brand: {{keg.brand}}<br>Style:  {{keg.style}}<br>Dollars Per Pint: ${{keg.price}}<br>Alcohol Content: {{keg.abv}}%<br><span id="pints-remaining" [class]="keg.pintsLow()">{{keg.pints}} Pints Remaining</span></p>
+    <div class="modifiers">
+      <button (click)="keg.editKeg(name, brand, price, abv); clearInputs();">Edit</button>
+      <button (click)="keg.orderDrink(keg.selectedOrder)">Order</button>
+      <select [value]="keg.selectedOrder" id="pint-select" (input)="keg.selectedOrder = $event.target.value">
+        <option value="pint">pint</option>
+        <option value="growler">growler</option>
+        <option value="large-growler">large growler</option>
+      </select>
+      <button (click)="deleteKeg(keg)" id="delete" type="button" name="button">Delete Beer</button>
+      <button (click)="keg.refill()" type="button" name="button">Refill</button>
+      <div *ngIf="keg.offSale" class="sale-percent">
+        <button (click)="keg.putOnSale()">Put On Sale</button>
+        <input [value]="keg.sale" (input)="keg.sale = $event.target.value" id="sales" type="text" placeholder="Sale By Percentage">
+      </div>
+      <div *ngIf="keg.onSale">
+        <button (click)="keg.takeOffSale()">Take Off Sale</button>
+      </div>
     </div>
-    <div *ngIf="keg.onSale">
-      <button (click)="keg.takeOffSale()">Take Off Sale</button>
-    </div>
+  </li>
+</ul>
+<ul *ngFor="let emptyKeg of totalKegs | empty">
+  <li class="empty-keg">
+    {{emptyKeg.name}}
   </li>
 </ul>

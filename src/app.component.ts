@@ -28,7 +28,7 @@ export class AppComponent {
       } else {
         this.startHappyHour();
       }
-    }.bind(this), 60000);
+    }.bind(this), 6000000);
   }
   addKeg() {
     if(this.name != "" && this.brand != "" && this.price != null && this.abv != null) {
@@ -37,6 +37,10 @@ export class AppComponent {
       this.clearInputs();
       alert("You missed a field");
     }
+  }
+  deleteKeg(keg) {
+    let indexer = this.totalKegs.indexOf(keg);
+    this.totalKegs.splice(indexer, 1);
   }
   clearInputs() {
     this.name = "";
@@ -64,6 +68,8 @@ export class AppComponent {
     this.happyHour = true;
     this.notHappyHour = false;
     this.totalKegs.forEach(function(keg){
+      console.log(keg.oldPrice);
+      console.log(keg.price);
       if(keg.oldPrice != null) {
         keg.price = keg.oldPrice;
         keg.oldPrice = null;
@@ -72,6 +78,8 @@ export class AppComponent {
       keg.price = keg.price - (keg.price * .5);
       keg.offSale = false;
       keg.onSale = false;
+      console.log(keg.oldPrice);
+      console.log(keg.price);
     })
   }
   endHappyHour() {
@@ -93,14 +101,20 @@ export class AppComponent {
   }
 }
 
-class Keg {
+export class Keg {
   public selectedOrder: string = "pint";
   public search: boolean = true;
   public sale: number = null;
   public onSale: boolean = false;
   public offSale: boolean = true;
   public oldPrice: number = null;
+  public empty: boolean = false;
   constructor(public name: string, public brand: string, public price: number, public abv: number, public style: string, public pints: number = 124) {}
+
+  refill() {
+    this.pints = 124;
+    this.empty = false;
+  }
 
   editKeg(name, brand, price, abv) {
     if(name != "") {
@@ -132,6 +146,7 @@ class Keg {
   orderDrink(selectedOrder) {
     if(this.pints <= 0) {
       alert(`You're out of ${this.name}`);
+      this.empty = true;
     } else if(selectedOrder === "pint") {
       this.pints--;
     } else if(selectedOrder === "growler" && this.pints >= 2) {
@@ -142,6 +157,7 @@ class Keg {
       alert(`You don't have enough ${this.name} to a ${selectedOrder}`);
     }
     if(this.pints <= 0) {
+      this.empty = true;
       alert(`You're out of ${this.name}`);
     }
   }
